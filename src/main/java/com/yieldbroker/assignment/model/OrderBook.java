@@ -6,6 +6,9 @@ import java.util.List;
 
 public class OrderBook {
 
+	public static final String ORDER_SIDE_BUY = "buy";
+	public static final String ORDER_SIDE_SELL = "sell";
+
 	private List<Order> buyOrders = new ArrayList<>();
 	private List<Order> sellOrders = new ArrayList<>();
 
