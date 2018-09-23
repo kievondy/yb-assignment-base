@@ -5,7 +5,9 @@ import java.sql.SQLException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.yieldbroker.assignment.model.OrderBook;
@@ -41,8 +43,11 @@ public class OrderBookController {
 	 *            - the amount to buy or sell. (must be positive)
 	 * @throws SQLException
 	 */
-	public void placeOrder(int clientOrderId, String side, BigDecimal price, int volume) throws SQLException {
+	@PostMapping("/placeorder")
+	public void placeOrder(@RequestParam("clientOrderId") int clientOrderId, @RequestParam("side") String side, @RequestParam("price") BigDecimal price,
+			@RequestParam("volume") int volume) throws SQLException {
 
+		orderBookService.placeOrder(clientOrderId, side, price, volume);
 	}
 
 	/**
@@ -50,7 +55,8 @@ public class OrderBookController {
 	 * 
 	 * @param clientOrderId
 	 */
-	public void cancelOrder(int clientOrderId) {
-
+	@PostMapping("/cancelOrder")
+	public void cancelOrder(@RequestParam("clientOrderId") int clientOrderId) {
+		orderBookService.cancelOrder(clientOrderId);
 	}
 }
