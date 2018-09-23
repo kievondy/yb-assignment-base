@@ -1,0 +1,10 @@
+
+
+You can access swagger page here:
+http://localhost:8081/swagger-ui.html
+
+H2 Console: http://localhost:8081/h2-console
+
+JDBC Url: jdbc:h2:file:./src/main/db/assigment-db
+username: sa
+password: <blank>
