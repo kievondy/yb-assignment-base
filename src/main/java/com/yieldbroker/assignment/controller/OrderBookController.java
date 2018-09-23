@@ -2,29 +2,30 @@ package com.yieldbroker.assignment.controller;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.sql.Statement;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.yieldbroker.assignment.model.OrderBook;
+import com.yieldbroker.assignment.service.OrderBookService;
 
+@RestController
+@RequestMapping("/market")
 public class OrderBookController {
 
+	@Autowired
+	OrderBookService orderBookService;
 
 	/**
 	 * Gets the current contents of the order book
 	 * 
 	 * @return order book containing buy and sell orders
 	 */
-	
+	@GetMapping("/orderbook")
 	public OrderBook getOrderBook() {
-		
-		return new OrderBook();
+		return orderBookService.getOrderBook();
 	}
 
 	/**
@@ -38,10 +39,10 @@ public class OrderBookController {
 	 *            - the price to buy or sell at. (must be positive)
 	 * @param volume
 	 *            - the amount to buy or sell. (must be positive)
-	 * @throws SQLException 
+	 * @throws SQLException
 	 */
 	public void placeOrder(int clientOrderId, String side, BigDecimal price, int volume) throws SQLException {
-		
+
 	}
 
 	/**
