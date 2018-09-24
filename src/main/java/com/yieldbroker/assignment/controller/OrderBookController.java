@@ -1,10 +1,16 @@
 package com.yieldbroker.assignment.controller;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.ConstraintViolationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,6 +54,10 @@ public class OrderBookController {
 	public void placeOrder(@RequestParam("clientOrderId") int clientOrderId, @RequestParam("side") String side, @RequestParam("price") BigDecimal price,
 			@RequestParam("volume") int volume) throws SQLException {
 
+		if (!OrderBook.ORDER_SIDES.contains(side)) {
+			throw new IllegalArgumentException(String.format("Invalid order side: must be '%s' or '%s'", OrderBook.ORDER_SIDE_BUY, OrderBook.ORDER_SIDE_SELL));
+		}
+
 		orderBookService.placeOrder(clientOrderId, side, price, volume);
 	}
 
@@ -60,4 +70,10 @@ public class OrderBookController {
 	public void cancelOrder(@RequestParam("clientOrderId") int clientOrderId) {
 		orderBookService.cancelOrder(clientOrderId);
 	}
+
+	@ExceptionHandler({ IllegalArgumentException.class, ConstraintViolationException.class })
+	public void handleValidationException(Exception e, HttpServletResponse response) throws IOException {
+		response.sendError(HttpStatus.BAD_REQUEST.value());
+	}
+
 }

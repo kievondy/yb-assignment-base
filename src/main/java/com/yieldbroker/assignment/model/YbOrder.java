@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 @Entity
 public class YbOrder {
@@ -20,9 +22,13 @@ public class YbOrder {
 	@Column(name = "ID")
 	private Long id;
 
+	@NotNull(message = "clientOrderId must be positive number")
+	@Positive(message = "clientOrderId must be positive number")
 	@Column(name = "CLIENT_ORDER_ID")
 	private Integer clientOrderId;
 
+	@NotNull(message = "price must be positive number")
+	@Positive(message = "price must be positive number")
 	@Column(name = "PRICE")
 	private BigDecimal price;
 
@@ -30,9 +36,12 @@ public class YbOrder {
 	@Temporal(TemporalType.TIMESTAMP)
 	private java.util.Date receivedTime;
 
+	@NotNull(message = "side must be 'sell' or 'buy'")
 	@Column(name = "SIDE")
 	private String side;
 
+	@NotNull(message = "volume must be positive number")
+	@Positive(message = "volume must be positive number")
 	@Column(name = "VOLUME")
 	private Integer volume;
 

@@ -2,12 +2,14 @@ package com.yieldbroker.assignment.model;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class OrderBook {
 
 	public static final String ORDER_SIDE_BUY = "buy";
 	public static final String ORDER_SIDE_SELL = "sell";
+	public static final List<String> ORDER_SIDES = Arrays.asList(ORDER_SIDE_BUY, ORDER_SIDE_SELL);
 
 	private List<Order> buyOrders = new ArrayList<>();
 	private List<Order> sellOrders = new ArrayList<>();
