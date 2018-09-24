@@ -1,11 +1,13 @@
 package com.yieldbroker.assignment.service;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.yieldbroker.assignment.model.OrderBook;
@@ -20,24 +22,36 @@ public class OrderBookService {
 	YbOrderRepository ybOrderRepository;
 
 	public OrderBook getOrderBook() {
+		OrderBook orderBook = new OrderBook();
+		orderBook.getBuyOrders().addAll(findBuyOrders());
+		orderBook.getSellOrders().addAll(findSellOrders());
+		return orderBook;
+	}
+
+	private List<Order> findBuyOrders() {
+		return findAllOrders(OrderBook.ORDER_SIDE_BUY,
+				Arrays.asList(org.springframework.data.domain.Sort.Order.desc("price"), org.springframework.data.domain.Sort.Order.asc("receivedTime")));
+	}
+
+	private List<Order> findSellOrders() {
+		return findAllOrders(OrderBook.ORDER_SIDE_SELL,
+				Arrays.asList(org.springframework.data.domain.Sort.Order.asc("price"), org.springframework.data.domain.Sort.Order.asc("receivedTime")));
+	}
+
+	private List<Order> findAllOrders(String side, List<org.springframework.data.domain.Sort.Order> sortOrders) {
 
 		OrderBook orderBook = new OrderBook();
 
-		List<YbOrder> allYbOrders = ybOrderRepository.findAll();
+		YbOrder ybOrder = new YbOrder();
+		ybOrder.setSide(side);
+		Example<YbOrder> example = Example.of(ybOrder);
 
-		List<Order> buyOrders = allYbOrders.stream()
-				.filter(ybOrder -> ybOrder.getSide().equals(OrderBook.ORDER_SIDE_BUY))
-				.map(ybOrder -> orderBook.new Order(ybOrder.getPrice(), ybOrder.getVolume()))
-				.collect(Collectors.toList());
-		orderBook.getBuyOrders().addAll(buyOrders);
+		Sort sort = Sort.by(sortOrders);
 
-		List<Order> sellOrders = allYbOrders.stream()
-				.filter(ybOrder -> ybOrder.getSide().equals(OrderBook.ORDER_SIDE_SELL))
-				.map(ybOrder -> orderBook.new Order(ybOrder.getPrice(), ybOrder.getVolume()))
-				.collect(Collectors.toList());
-		orderBook.getSellOrders().addAll(sellOrders);
+		List<YbOrder> foundOrders = ybOrderRepository.findAll(example, sort);
 
-		return orderBook;
+		return foundOrders.stream().map(yb -> orderBook.new Order(yb.getPrice(), yb.getVolume())).collect(Collectors.toList());
+
 	}
 
 	public void placeOrder(int clientOrderId, String side, BigDecimal price, int volume) {
